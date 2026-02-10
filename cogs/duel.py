@@ -32,7 +32,7 @@ class duel_view(View):
         p2_name = self.player_2.display_name
         
         embed = discord.Embed(title="*Wizard Duel*",
-                              description="Hello",
+                              description="🚧Under Construction🚧",
                               color=0xcc64f9)
         
         embed.set_author(name=f"{p1_name} vs. {p2_name}")

@@ -62,6 +62,18 @@ class botcommands(commands.Cog):
         full_ponder = random.choice(ponderings) + " " + random.choice(postponderings)
         
         await ctx.reply(full_ponder)
+    
+    @commands.hybrid_command(name="ping", description="Check IShowWizardry's latency")
+    async def ping(self, ctx:commands.Context):
+        latency = round(self.bot.latency * 1000)
+        
+        embed = discord.Embed(
+            title="🏓 Pong!",
+            description=f"**Latency:** `{latency}ms`",
+            color=0x43ea10
+        )
+        
+        await ctx.reply(embed=embed)
 
 async def setup(bot):
     await bot.add_cog(botcommands(bot))
