@@ -32,7 +32,8 @@ class botcommands(commands.Cog):
             "Did you know?",
             "Dude the orb literally said",
             "Im recieving a message from the spirits...",
-            "The vision is unclear..."
+            "The vision is unclear...",
+            f"Chat, what should I tell {username}?"
         ]
         
         postponderings = [
