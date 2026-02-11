@@ -1,4 +1,4 @@
-# Version 0.0.2
+# Version 0.1.0
 
 import discord
 import json
@@ -17,7 +17,8 @@ intents.message_content = True
 intents.members = True
 intents.guilds = True
 intents.reactions = True
-bot = commands.Bot(command_prefix='cast ', intents=intents)
+prefixes = ['cast ', 'Cast ', 'CAST ', '~']
+bot = commands.Bot(command_prefix=prefixes, intents=intents)
 
 debug_mode = input("Debug mode? (y/n)") == "y"
 
@@ -26,7 +27,9 @@ debug_mode = input("Debug mode? (y/n)") == "y"
 async def on_ready():
     extentions = [
         "cogs.botcommands",
-        "cogs.duel"
+        "cogs.duel",
+        "cogs.fish",
+        "cogs.dice"
     ]
     
     print("Jello World!")

@@ -33,7 +33,8 @@ class botcommands(commands.Cog):
             "Dude the orb literally said",
             "Im recieving a message from the spirits...",
             "The vision is unclear...",
-            f"Chat, what should I tell {username}?"
+            f"Chat, what should I tell {username}?",
+            "The great oracle foresees..."
         ]
         
         postponderings = [
@@ -56,7 +57,14 @@ class botcommands(commands.Cog):
             "You will be slain by a beast.",
             "Your quest will succeed.",
             "*Casts lightning spell at you*",
-            "GTA6 delayed."
+            "GTA6 delayed.",
+            "Good luck.",
+            "You will destroy your opponent.",
+            "GEM ALARM",
+            "Someone will steal your bike.",
+            "IMG_1124.jpeg",
+            f"{username} will never be a wizard",
+            "Fuck you"
         ]
         
         full_ponder = random.choice(ponderings) + " " + random.choice(postponderings)

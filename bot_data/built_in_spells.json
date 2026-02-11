@@ -1,0 +1,86 @@
+{
+    "0": {
+        "name": "Fireball",
+        "type": "Attack",
+        "rarity": "Common",
+        "damage_min": 5,
+        "damage_max": 15,
+        "shield": 0,
+        "heal": 0,
+        "damage_boost": 0,
+        "uses": 4,
+        "description": "Basic attack spell"
+    },
+    "1": {
+        "name": "Lightning",
+        "type": "Special",
+        "rarity": "Common",
+        "damage_min": 0,
+        "damage_max": 8,
+        "shield": 0,
+        "heal": 0,
+        "damage_boost": 0,
+        "uses": 3,
+        "description": "Ignores shields when dealing damage"
+    },
+    "2": {
+        "name": "Regenerate",
+        "type": "Healing",
+        "rarity": "Common",
+        "damage_min": 0,
+        "damage_max": 0,
+        "shield": 0,
+        "heal": 30,
+        "damage_boost": 0,
+        "uses": 1,
+        "description": "Basic healing spell"
+    },
+    "3": {
+        "name": "Wizard Shield",
+        "type": "Shield",
+        "rarity": "Common",
+        "damage_min": 0,
+        "damage_max": 0,
+        "shield": 15,
+        "heal": 0,
+        "damage_boost": 0,
+        "uses": 3,
+        "description": "Basic shield spell"
+    },
+    "4": {
+        "name": "Everything",
+        "type": "Special",
+        "rarity": "Rare",
+        "damage_min": 0,
+        "damage_max": 8,
+        "shield": 5,
+        "heal": 5,
+        "damage_boost": 1,
+        "uses": 2,
+        "description": "Does a little bit of everything"
+    },
+    "5": {
+        "name": "Reuse",
+        "type": "Utility",
+        "rarity": "Rare",
+        "damage_min": 0,
+        "damage_max": 0,
+        "shield": 0,
+        "heal": 0,
+        "damage_boost": 0,
+        "uses": 2,
+        "description": "Cast a spell that you have prepared, even if you normally couldn't"
+    },
+    "6": {
+        "name": "Strength",
+        "type": "Utility",
+        "rarity": "Uncommon",
+        "damage_min": 0,
+        "damage_max": 0,
+        "shield": 0,
+        "heal": 0,
+        "damage_boost": 3,
+        "uses": 1,
+        "description": "Your attacks deal more damage this turn"
+    }
+}
