@@ -79,7 +79,7 @@ class spell():
         return uses
     
     def calc_damage(self):
-        return random.randint(self.damage_min, self.damage_max) + self.damage_boost
+        return random.randint(self.damage_min, self.damage_max)
     
     def use(self):
         self.uses -= 1 if self.uses > 0 else 0

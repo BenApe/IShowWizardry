@@ -46,6 +46,7 @@ def break_lines(text:str, max_len:int, preserve_words:bool = True):
 
 def loadjson(file_name:str, int_keys:bool = True):
     file_path = f"{file_name}.json"
+    data = {}
     
     try:
         with open(file_path, 'r') as file:

@@ -1,4 +1,4 @@
-# Version 0.1.0
+VERSION = "0.2.0"
 
 import discord
 import json
@@ -20,7 +20,18 @@ intents.reactions = True
 prefixes = ['cast ', 'Cast ', 'CAST ', '~']
 bot = commands.Bot(command_prefix=prefixes, intents=intents)
 
-debug_mode = input("Debug mode? (y/n)") == "y"
+debug_mode = input("Debug mode? (y/n) ") == "y"
+
+banner = rf'''
+ *      *     *    *          *        *     *           *       *   
+   *___ ____*_         *      __ *__ __           *        _*       *
+   /  //___///    *       *  / / / //_/__  *   *          //         
+ * // //__ //__ ____*______ / /─/ /__\__ \ ___   ____*___//____ _* _ 
+  // ___///∙¬ // , // / / // / / // // __// _ \ / ,_// _ // ,_// / / 
+/__//___/// ///___//_____//_____//_/ \___\\__///_/  /___//_/   \_ /  
+________________________________________________________________//   
+\_/Version {VERSION}\_____________________________/Made by: mega05\_/    
+'''
 
 # Initialize
 @bot.event
@@ -29,7 +40,9 @@ async def on_ready():
         "cogs.botcommands",
         "cogs.duel",
         "cogs.fish",
-        "cogs.dice"
+        "cogs.dice",
+        "cogs.test",
+        "cogs.levels"
     ]
     
     print("Jello World!")
@@ -44,7 +57,7 @@ async def on_ready():
         synced = await bot.tree.sync()
         
         print(f"Synced {len(synced)} command(s)")
-        print("IShowWizardry is ready.")
+        print(banner)
         
         activity = discord.Activity(type=discord.ActivityType.watching, name="the orb")
         await bot.change_presence(status=discord.Status.online, activity=activity)

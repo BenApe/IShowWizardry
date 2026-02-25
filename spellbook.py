@@ -56,6 +56,9 @@ class spellbook():
             }
         }
     
+    def get_owner(self):
+        return self.owner
+    
     def get_spells(self, as_dict:bool = True):
         user_spellbook = self.default_spellbook
         

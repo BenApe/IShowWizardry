@@ -1,28 +1,22 @@
-Version 0.1.0 (Prerelease)
+Version 0.2.0 (Prerelease)
 
 Changelog:
     Commands:
-    - Added die command
-    - Added fishing_rod command
-    - Major progress on wizard duels
-    - Added a few more ponderings
+    - Added level command
+    - Added edit_level command (mod only)
+    - Working on doomscroll command (non-functional)
 
     Wizard duels:
-    - Created some built-in spells
-    - Created a default spellbook
+    - Duel system is still incomplete
+    - A lot of changes and updates to the spell system (still incomplete)
 
     Modules:
-    - jsonutils -> botutils (rename)
-    - botutils is now a set of methods rather than a class
-    - Added 'keygen' and 'break_lines' methods to botutils
-    - Created random response when a user presses a button they aren't supposed to press
-    - Added 'to_dict', 'from_dict', and 'to_string' to spell
-    - Added 'get_spells', 'get_prepared_spells', and 'spell_dict_to_list' to spellbook
+    - Created the userlevel module that handles level and xp
+    - Created the banned_words module that handles profanity (will be used with doomscroll command)
+    - Added gamemaster module that will handle wizard duels
 
     Other:
-    - Set up folders for user_data and bot_data
-    - Added '~' as a prefix
-    - 'Cast ' and 'CAST ' are now valid prefixes
+    - Added a list of profanity sorted by severity (1 for slurs, 4 for minorly offensive words)
 
 > Created by mega05
 

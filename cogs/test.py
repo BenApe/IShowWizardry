@@ -1,3 +1,5 @@
+# This file is a demonstration of how buttons and view objects work
+
 import discord
 
 from discord.ext import commands
@@ -9,11 +11,11 @@ class test(commands.Cog):
         
     @commands.hybrid_command(name="test_embed", description="ignore")
     async def test_embed(self, ctx:commands.Context, message:str):
-        timeout = 1000                                              # After 1000s you won't be able to interact with the buttons anymore
+        timeout = 1000                                     # After 1000s you won't be able to interact with the buttons anymore
         
         view = test_view(message=message, timeout=timeout) # Create a view object
-        embed = await view.update_embed()                           # Get the embed from the view object
-        await ctx.send(embed=embed, view=view)                      # Send the embed
+        embed = await view.update_embed()                  # Get the embed from the view object
+        await ctx.send(embed=embed, view=view)             # Send the embed
     
 class test_view(View):
     def __init__(self, message:str, timeout:int):

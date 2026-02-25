@@ -3,12 +3,13 @@ import discord
 import random
 
 class spellcaster():
-    def __init__(self, user:discord.User, health:int = 100, max_health:int=100):
+    def __init__(self, user:discord.User, health:int = 40, max_health:int=40):
         self.user = user
         self.health = health
         self.max_health = max_health
         self.shield = 0
         self.damage_boost = 0
+        self.cast_this_turn = []
     
     def get_user(self):
         return self.user
@@ -63,3 +64,21 @@ class spellcaster():
         self.shield += amount
         
         return self.shield
+    
+    def cast_spell(self, spell_type:str):
+        self.cast_this_turn.append(spell_type)
+        
+        return self.cast_this_turn
+    
+    def next_turn(self):
+        self.cast_this_turn = []
+    
+    def to_string(self):
+        casted = ""
+        
+        for item in self.cast_this_turn:
+            casted += item
+        
+        caster = f"**Health:** {self.health}/{self.max_health}\n**Shield:** {self.shield}\n**Damage Boost:** {self.damage_boost}\n**Casted This Turn:** {casted}"
+        
+        return caster
