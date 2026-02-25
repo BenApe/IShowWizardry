@@ -82,6 +82,24 @@ class botcommands(commands.Cog):
         )
         
         await ctx.reply(embed=embed)
+    
+    @commands.hybrid_command(name="changelog", description="Get the bot's changelog")
+    async def changelog(self, ctx:commands.Context):
+        try:
+            with open("README.txt", 'r', encoding='utf-8') as file:
+                content = file.read()
+                
+                if len(content) > 1900:
+                    await ctx.send(file=discord.File("README.txt"))
+                
+                else:
+                    await ctx.send(f"```\n{content}\n```")
+        
+        except FileNotFoundError:
+            await ctx.send("Sorry, the changelog is missing.")
+        
+        except Exception as e:
+            await ctx.send(f"Error reading changelog: {e}")
 
 async def setup(bot):
     await bot.add_cog(botcommands(bot))

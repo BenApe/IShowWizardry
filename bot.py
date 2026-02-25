@@ -1,4 +1,4 @@
-VERSION = "0.2.0"
+VERSION = "0.2.1"
 
 import discord
 import json
@@ -18,7 +18,7 @@ intents.members = True
 intents.guilds = True
 intents.reactions = True
 prefixes = ['cast ', 'Cast ', 'CAST ', '~']
-bot = commands.Bot(command_prefix=prefixes, intents=intents)
+bot = commands.Bot(command_prefix=prefixes, intents=intents, help_command=None)
 
 debug_mode = input("Debug mode? (y/n) ") == "y"
 
@@ -84,5 +84,78 @@ if not debug_mode:
     @bot.event
     async def on_error(event):
         print(f"Error: {event}")
+
+@bot.hybrid_command(name="help", aliases=["h", "commands"], description="Shows a list of commands and other useful information.")
+async def help(ctx:commands.Context, command_name:str=None):
+    command_descriptions = {
+        "General":{
+            "help": "Shows this message. You can also specify a command to get its description. Aliases: 'h', 'commands'",
+            "ping": "Check the bot's latency.",
+            "changelog": "See what has changed in the most recent update. May not be accurate."
+        },
+        "Fun":{
+            "die": "Roll a die with as many sides as you want.",
+            "fishing_rod": "Go fishing! Currently, the bot doesn't store the fish you collect, but you can still gain xp. Aliases: 'fish', 'fishingrod'",
+            "ponder": "Have your fortune read."
+        },
+        "Levels & XP":{
+            "level": "Get your Wizard Level.",
+            "edit_level": "MOD ONLY - Edit a user's level or xp amount. Changing level will set xp to the minimum for that level."
+        }
+    }
+    
+    if command_name == None:
+        help_description = ""
+        
+        for section in command_descriptions:
+            help_description += f"### {section}\n"
+            section_cmds = command_descriptions.get(section)
+            
+            for command in section_cmds:
+                help_description += f"- **{command}:**"
+                cmd_description = section_cmds.get(command)
+                help_description += f" {cmd_description}\n"
+        
+        embed = discord.Embed(
+            description=help_description
+        )
+        
+        prefix_str = ""
+        
+        for prefix in prefixes:
+            prefix_str += f"'{prefix.split(" ")[0]}', "
+            
+        prefix_str = prefix_str[:-2]
+        
+        embed.set_author(name=f"IShowWizardry v{VERSION}", icon_url="https://cdn.discordapp.com/avatars/1470289312997310516/1da0eec450e33ba919bd9e03cd758f92.webp?size=1024")
+        embed.set_footer(text=f"Prefixes: {prefix_str}")
+        
+        await ctx.send(embed=embed)
+    
+    else:
+        cmd_description = ""
+        
+        for section_name in command_descriptions:
+            section = command_descriptions.get(section_name)
+            if command_name in section:
+                cmd_description = section.get(command_name)
+                break
+        
+        embed = discord.Embed(
+            title=f"Command: {command_name}",
+            description=cmd_description
+        )
+        
+        prefix_str = ""
+        
+        for prefix in prefixes:
+            prefix_str += f"'{prefix.split(" ")[0]}', "
+            
+        prefix_str = prefix_str[:-2]
+        
+        embed.set_author(name=f"IShowWizardry v{VERSION}", icon_url="https://cdn.discordapp.com/avatars/1470289312997310516/1da0eec450e33ba919bd9e03cd758f92.webp?size=1024")
+        embed.set_footer(text=f"Prefixes: {prefix_str}")
+        
+        await ctx.send(embed=embed)
 
 bot.run(BOT_TOKEN)
