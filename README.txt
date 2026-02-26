@@ -1,9 +1,13 @@
-Version 0.2.1 (Prerelease)
+Version 0.2.2 (Prerelease)
 
 Changelog:
-    Commands:
-    - Added help command
-    - Added changelog command (displays this file)
+    Fishing:
+    - Added fish_pool command
+    - Fish are now capped at 15 per user. Each time the user fishes, they remove one from the pool. A new fish is added to the pool every minute.
+    - Fish are still not stored in memory
+
+    Methods:
+    - Added get_discord_timestamp method to botutils
 
 > Created by mega05
 

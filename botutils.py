@@ -1,5 +1,9 @@
 import json
 import random
+import discord
+
+from discord.ext import commands
+from datetime import datetime, timedelta, timezone
 
 def keygen(dict:dict):
     key = random.randint(0, 1000000)
@@ -72,3 +76,20 @@ def savejson(file_name, data):
             
     except Exception as e:
         print(f"Error saving {file_path}: {e}")
+
+def get_discord_timestamp(iso_time:str, style="R", increment_minutes:int = 0):
+    """
+    Styles:
+    't' - Short time (e.g., 16:20)
+    'T' - Long time (e.g., 16:20:30)
+    'd' - Short date (e.g., 20/04/2021)
+    'D' - Long date (e.g., 20 April 2021)
+    'f' - Short date/time (e.g., 20 April 2021 16:20)
+    'F' - Long date/time (e.g., Tuesday, 20 April 2021 16:20)
+    'R' - Relative time (e.g., 2 hours ago, in 5 minutes)
+    """
+    original_time = datetime.fromisoformat(iso_time.replace('Z', '+00:00'))
+    time = original_time + timedelta(minutes=increment_minutes)
+    timestamp = int(time.timestamp())
+    
+    return f"<t:{timestamp}:{style}>"

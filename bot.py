@@ -1,4 +1,4 @@
-VERSION = "0.2.1"
+VERSION = "0.2.2"
 
 import discord
 import json
@@ -96,6 +96,7 @@ async def help(ctx:commands.Context, command_name:str=None):
         "Fun":{
             "die": "Roll a die with as many sides as you want.",
             "fishing_rod": "Go fishing! Currently, the bot doesn't store the fish you collect, but you can still gain xp. Aliases: 'fish', 'fishingrod'",
+            "fish_pool": "Check how many fish you have in your pond. Aliases: 'pool', 'pond'",
             "ponder": "Have your fortune read."
         },
         "Levels & XP":{
