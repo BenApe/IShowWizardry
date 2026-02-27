@@ -1,13 +1,13 @@
-Version 0.2.2 (Prerelease)
+Version 0.2.3 (Prerelease)
 
 Changelog:
-    Fishing:
-    - Added fish_pool command
-    - Fish are now capped at 15 per user. Each time the user fishes, they remove one from the pool. A new fish is added to the pool every minute.
-    - Fish are still not stored in memory
+    Inventory:
+    - Fishing now adds fish to a global inventory
+    - Eventually, you'll be able to view your spells with the inventory command
+    - Inventory command is set up to allow multiple different inventories, so if other things are tracked in the future, theyll show up in inventory
 
-    Methods:
-    - Added get_discord_timestamp method to botutils
+    Banned Users:
+    - Added a banned users class so users can be banned from doomscroll (still not done) if their message contains profanity
 
 > Created by mega05
 

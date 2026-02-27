@@ -5,7 +5,7 @@ import userlevel
 from discord.ext import commands, tasks
 from discord import app_commands
 from datetime import datetime, timedelta, timezone
-from botutils import savejson, loadjson, get_discord_timestamp
+from botutils import savejson, loadjson, get_discord_timestamp, keygen
 
 POOL_CAP = 15
 
@@ -94,6 +94,12 @@ class fish(commands.Cog):
     
     def cog_unload(self):
         self.pool_check.cancel()
+    
+    def catch_fish(self, user_id:int, fish:dict):
+        user_fishes = loadjson(f"user_data/fish/{user_id}")
+        key = keygen(user_fishes)
+        user_fishes.update({key: fish})
+        savejson(f"user_data/fish/{user_id}", user_fishes)
         
     @tasks.loop(minutes=1)
     async def pool_check(self):
@@ -244,24 +250,26 @@ class fish(commands.Cog):
         user_data.add_xp(xp_gain)
         
         fish = {
-            fishyfishy:{
-                "rarity": rarity,
-                "size": size,
-                "value": value
-            }
+            "name": fishyfishy,
+            "rarity": rarity,
+            "size": size,
+            "value": value
         }
         
         catch = f"You caught a {size.lower()}-sized {rarity.lower()} {fishyfishy.lower()} worth {value} mana!\n-# +{xp_gain} XP"
         
         if fishyfishy == "Nothing":
-            catch = "You lost a some of bait!"
+            catch = "You lost some bait!"
             
             if random.randint(1, 100) < 66:
                 catch = "You caught nothing!"
                 pool_mngr.increment_pool(user_id=user.id)
         
+        else:
+            self.catch_fish(user.id, fish)
+        
         await ctx.reply(catch)
-
+    
 
 async def setup(bot):
     await bot.add_cog(fish(bot))

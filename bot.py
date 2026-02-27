@@ -1,4 +1,4 @@
-VERSION = "0.2.2"
+VERSION = "0.2.3"
 
 import discord
 import json
@@ -41,8 +41,8 @@ async def on_ready():
         "cogs.duel",
         "cogs.fish",
         "cogs.dice",
-        "cogs.test",
-        "cogs.levels"
+        "cogs.levels",
+        "cogs.userinventory"
     ]
     
     print("Jello World!")
@@ -97,7 +97,8 @@ async def help(ctx:commands.Context, command_name:str=None):
             "die": "Roll a die with as many sides as you want.",
             "fishing_rod": "Go fishing! Currently, the bot doesn't store the fish you collect, but you can still gain xp. Aliases: 'fish', 'fishingrod'",
             "fish_pool": "Check how many fish you have in your pond. Aliases: 'pool', 'pond'",
-            "ponder": "Have your fortune read."
+            "ponder": "Have your fortune read.",
+            "inventory": "Get your spells and fish (only fish works right now). Aliases: 'inv', 'i'"
         },
         "Levels & XP":{
             "level": "Get your Wizard Level.",
