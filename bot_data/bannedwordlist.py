@@ -110,8 +110,6 @@ words = {
   "voyeur": 3,
   "vulva": 3,
   "wank": 3,
-  "yaoi": 3,
-  "yuri": 3,
 
   "arsehole": 2,
   "arse": 2,
@@ -145,7 +143,8 @@ words = {
 
   "beaners": 1,
   "beaner": 1,
-  "bimbo": 1,
+  "chink": 1,
+  "chinks": 1,
   "coon": 1,
   "coons": 1,
   "cunt": 1,

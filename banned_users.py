@@ -1,9 +1,9 @@
-from botutils import loadjson, savejson
+from botutils import loadjson, savejson, get_discord_timestamp
 from datetime import datetime, timedelta
 
 class BannedUsers():
     def __init__(self):
-        self.banned_users_path = "banned_users.json"
+        self.banned_users_path = "bot_data/banned_users"
         self.banned_users = loadjson(file_name=self.banned_users_path)
         self.default_ban_length = 168 # hours (1 week)
     
@@ -27,3 +27,33 @@ class BannedUsers():
         user = self.banned_users.pop(user_id)
         savejson(self.banned_users_path, self.banned_users)
         return user
+    
+    def check_user(self, user_id:int):
+        if user_id in self.banned_users:
+            user_data = self.banned_users.get(user_id)
+            offenses = user_data.get("offenses")
+            
+            if offenses == 0:
+                return False
+            
+            last_offense = datetime.fromisoformat(user_data.get("last_offense"))
+            now = datetime.now()
+            
+            if now - last_offense > timedelta(hours=self.default_ban_length):
+                return False
+        
+        else:
+            return False
+        
+        return True
+    
+    def get_timestamp(self, user_id:int):
+        if user_id not in self.banned_users:
+            return None
+        
+        user_data = self.banned_users.get(user_id)
+        last_offense = datetime.fromisoformat(user_data.get("last_offense"))
+        end_time = last_offense + timedelta(hours=self.default_ban_length)
+        timestamp = get_discord_timestamp(iso_time=end_time.isoformat(), style='f')
+        
+        return timestamp

@@ -80,12 +80,19 @@ def savejson(file_name, data):
 def get_discord_timestamp(iso_time:str, style="R", increment_minutes:int = 0):
     """
     Styles:
+    
     't' - Short time (e.g., 16:20)
+    
     'T' - Long time (e.g., 16:20:30)
+    
     'd' - Short date (e.g., 20/04/2021)
+    
     'D' - Long date (e.g., 20 April 2021)
+    
     'f' - Short date/time (e.g., 20 April 2021 16:20)
+    
     'F' - Long date/time (e.g., Tuesday, 20 April 2021 16:20)
+    
     'R' - Relative time (e.g., 2 hours ago, in 5 minutes)
     """
     original_time = datetime.fromisoformat(iso_time.replace('Z', '+00:00'))

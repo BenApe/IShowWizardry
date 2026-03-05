@@ -1,15 +1,14 @@
 from bot_data.bannedwordlist import words
 
 class BannedWords():
-    def __init__(self):
-        self.custom_list = {}
+    def __init__(self, tier1:bool = True, tier2:bool = True, tier3:bool = True, tier4:bool = True):
+        self.custom_list = words
         self.blacklist = {}
         self.enabled_tiers = {
-            1: True,
-            2: True,
-            3: True,
-            4: True,
-            5: True
+            1: tier1,
+            2: tier2,
+            3: tier3,
+            4: tier4
         }
         
     def get_current_list(self):

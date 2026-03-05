@@ -6,7 +6,6 @@ from discord.ext import commands, tasks
 from discord import app_commands
 from datetime import datetime, timedelta, timezone
 from botutils import savejson, loadjson, get_discord_timestamp, keygen
-
 POOL_CAP = 15
 
 class fishpool():
@@ -91,6 +90,19 @@ class fish(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.pool_check.start()
+        self.pond = rf'''
+```
+       __________         
+    __) *   ,  * (_       
+  _/  *   * |\  *  \__    
+ (   *   *  ¿ \    *  \~_ 
+( *   *     * σ\ *    * _)
+ \___  *  ⌐────[─¬  * ─^  
+     ^~-__⌐──────¬___/    
+          ⌐──────¬        
+          ⌐──────¬        
+```
+'''
     
     def cog_unload(self):
         self.pool_check.cancel()
@@ -100,6 +112,27 @@ class fish(commands.Cog):
         key = keygen(user_fishes)
         user_fishes.update({key: fish})
         savejson(f"user_data/fish/{user_id}", user_fishes)
+    
+    async def generate_pond(self, count:int, timestamp:str):
+        pond_list = ["≈"] * 15
+        final_pond = f"{self.pond}"
+        
+        for i in range(0, count):
+            pond_list[i] = "x"
+        
+        random.shuffle(pond_list)
+        
+        n = 0
+        for i in range(0, len(self.pond) - 1):
+            if self.pond[i] == "*":
+                if pond_list[n] == "x":
+                    final_pond = f"{final_pond[:i-1]}<><{final_pond[i+2:]}" if random.randint(0, 1) == 0 else f"{final_pond[:i-1]}><>{final_pond[i+2:]}"
+                else:
+                    final_pond = f"{final_pond[:i]}{pond_list[n]}{final_pond[i+1:]}"
+                n += 1
+        
+        final_pond += f"You have {count} fish in your pond.\n-# Next fish {timestamp}" if count < 15 else f"You have {count} fish left in your pond.\n-# Your pond is full!"
+        return final_pond
         
     @tasks.loop(minutes=1)
     async def pool_check(self):
@@ -121,7 +154,7 @@ class fish(commands.Cog):
         
         count = pool_mngr.update_pool(user.id)
         timestamp = pool_mngr.get_remaining_seconds(user.id)
-        description = f"You have {count} fish left in your pond.\n-# Next fish {timestamp}" if count < 15 else f"You have {count} fish left in your pond.\n-# Your pond is full!"
+        description = await self.generate_pond(count=count, timestamp=timestamp)
         
         embed = discord.Embed(
             description=description,
@@ -132,7 +165,7 @@ class fish(commands.Cog):
         
         await ctx.send(embed=embed)
     
-    @commands.hybrid_command(name="fishing_rod", description="Fish", aliases=["fish", "fishingrod"])
+    @commands.hybrid_command(name="fishing_rod", description="Fish", aliases=["fish", "fishingrod", "fih"])
     async def fishing_rod(self, ctx:commands.Context):
         user = ctx.author
         
@@ -261,12 +294,15 @@ class fish(commands.Cog):
         if fishyfishy == "Nothing":
             catch = "You lost some bait!"
             
-            if random.randint(1, 100) < 66:
+            if random.randint(0, 2) < 2:
                 catch = "You caught nothing!"
                 pool_mngr.increment_pool(user_id=user.id)
         
         else:
             self.catch_fish(user.id, fish)
+        
+        if "fih" in ctx.message.content:
+            return await ctx.reply(catch, file=discord.File("bot_data/fih.png"))
         
         await ctx.reply(catch)
     

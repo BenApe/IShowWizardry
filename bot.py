@@ -1,4 +1,4 @@
-VERSION = "0.2.3"
+VERSION = "0.2.4"
 
 import discord
 import json
@@ -98,7 +98,8 @@ async def help(ctx:commands.Context, command_name:str=None):
             "fishing_rod": "Go fishing! Currently, the bot doesn't store the fish you collect, but you can still gain xp. Aliases: 'fish', 'fishingrod'",
             "fish_pool": "Check how many fish you have in your pond. Aliases: 'pool', 'pond'",
             "ponder": "Have your fortune read.",
-            "inventory": "Get your spells and fish (only fish works right now). Aliases: 'inv', 'i'"
+            "inventory": "Get your spells and fish (only fish works right now). Aliases: 'inv', 'i'",
+            "say": "IShowWizardy will say the message you give it."
         },
         "Levels & XP":{
             "level": "Get your Wizard Level.",

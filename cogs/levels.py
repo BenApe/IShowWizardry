@@ -41,7 +41,7 @@ class levels(commands.Cog):
             await ctx.send(f"Edited {user.mention}'s {action}.\n> **Previous:**\n> Level: {user_data.get_level()} | XP: {user_data.get_xp()}\n\n> **Now:**\n> Level: {level} | XP: {xp}\n-# (Changed xp total by {amount})")
             user_data.set_user_data({user.id: {"xp": xp, "level": level}})
         
-    @commands.hybrid_command(name="level", description="Get your wizard level")
+    @commands.hybrid_command(name="level", description="Get your wizard level", aliases=["lvl"])
     async def level(self, ctx:commands.Context, user:discord.User = None):
         server_id = ctx.guild.id
         

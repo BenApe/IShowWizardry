@@ -1,8 +1,12 @@
 import discord
 import random
+import banned_words
+import banned_users
 
+from datetime import datetime
 from discord.ext import commands
 from discord import app_commands
+from log import log_message
 
 class botcommands(commands.Cog):
     def __init__(self, bot):
@@ -100,6 +104,58 @@ class botcommands(commands.Cog):
         
         except Exception as e:
             await ctx.send(f"Error reading changelog: {e}")
+
+    @commands.command(name="secret_dev_command", aliases=["dev"])
+    async def dev_command(self, ctx:commands.Context):
+        if ctx.author.id != 554775854501330956:
+            return await ctx.send("fuck you lmao")
+        
+        bot_guilds = list(self.bot.guilds)
+        guild_str = "**Bot Guilds:**\n"
+        
+        for guild in bot_guilds:
+            guild_str += f"> {guild}\n"
+
+        return await ctx.send(guild_str)
+    
+    @commands.hybrid_command(name="say", description="Make IShowWizardry say something. (Slurs aren't allowed btw)", aliases=["s"])
+    async def say(self, ctx:commands.Context, message:str):
+        if not message:
+            return
+        
+        user = ctx.author
+        
+        if isinstance(ctx, discord.Interaction):
+            user = ctx.user
+        
+        bannedusers = banned_users.BannedUsers()
+        timestamp = bannedusers.get_timestamp(user.id)
+        
+        if bannedusers.check_user(user.id) and timestamp != None:
+            return await ctx.send(f"You've been banned from using this command until {timestamp}", ephemeral=True)
+        
+        if ctx.interaction:
+            await ctx.send("Message sent!", ephemeral=True)
+        
+        else:
+            await ctx.message.delete()
+        
+        banned = banned_words.BannedWords()
+        banned.disable_tier(2)
+        banned.disable_tier(3)
+        banned.disable_tier(4)
+        
+        msg_words = message.split(" ")
+        channel = ctx.channel
+        
+        await log_message(user=user, message=message, iso_time=datetime.now().isoformat(), bot=self.bot, command_used="/say", server=ctx.guild)
+        
+        for word in msg_words:
+            if banned.isprofane(word):
+                return await user.send(f"The word '{word}' is not permitted.")
+        
+        await channel.send(message)
+        
 
 async def setup(bot):
     await bot.add_cog(botcommands(bot))
