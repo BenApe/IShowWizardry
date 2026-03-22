@@ -1,4 +1,4 @@
-VERSION = "0.2.4"
+VERSION = "0.3.0"
 
 import discord
 import json
@@ -11,6 +11,7 @@ from discord import app_commands
 
 load_dotenv(dotenv_path=".env")
 BOT_TOKEN = os.getenv("BOT_TOKEN")
+LOG_CHANNEL_ID = os.getenv("LOG_CHANNEL_ID")
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -42,7 +43,8 @@ async def on_ready():
         "cogs.fish",
         "cogs.dice",
         "cogs.levels",
-        "cogs.userinventory"
+        "cogs.userinventory",
+        "cogs.bugreport"
     ]
     
     print("Jello World!")
@@ -74,6 +76,10 @@ async def on_ready():
         print(f"\nSlash Commands ({len(bot.tree.get_commands())}):")
         for cmd in bot.tree.get_commands():
             print(f"- {cmd.name}")
+    
+    else:
+        log_channel = await bot.fetch_channel(LOG_CHANNEL_ID)
+        await log_channel.send(f"```\n{banner}\n```")
 
 if not debug_mode:
     @bot.event
@@ -91,7 +97,8 @@ async def help(ctx:commands.Context, command_name:str=None):
         "General":{
             "help": "Shows this message. You can also specify a command to get its description. Aliases: 'h', 'commands'",
             "ping": "Check the bot's latency.",
-            "changelog": "See what has changed in the most recent update. May not be accurate."
+            "changelog": "See what has changed in the most recent update.",
+            "bug_report": "Submit a bug report to the dev (slash command only)"
         },
         "Fun":{
             "die": "Roll a die with as many sides as you want.",

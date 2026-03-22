@@ -1,11 +1,14 @@
 import discord
+import os
 
 from discord.ext import commands
 from discord.ui import Button, View
 from botutils import savejson, loadjson, get_discord_timestamp
 from banned_users import BannedUsers
+from dotenv import load_dotenv
 
-LOG_CHANNEL_ID = 1478912785000824882
+load_dotenv(dotenv_path=".env")
+LOG_CHANNEL_ID = os.getenv("LOG_CHANNEL_ID")
 
 async def log_message(user:discord.User, message:str, iso_time:str, bot:commands.Bot, command_used:str, server:discord.Guild):
     channel = await bot.fetch_channel(LOG_CHANNEL_ID)

@@ -79,7 +79,7 @@ def savejson(file_name, data):
 
 def get_discord_timestamp(iso_time:str, style="R", increment_minutes:int = 0):
     """
-    Styles:
+    ## Styles:
     
     't' - Short time (e.g., 16:20)
     

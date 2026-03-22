@@ -7,6 +7,7 @@ import spellcaster
 import gamemaster
 
 from botutils import loadjson
+from discord import app_commands
 from discord.ext import commands
 from discord.ui import Button, View
 
@@ -115,6 +116,8 @@ class duel_view(View):
             cast_btn = Button(label="Cast Spell", style=discord.ButtonStyle.green)
             cast_btn.callback = self.cast_spells_callback
             self.add_item(cast_btn)
+            
+            self.game_interaction = interaction
         
         elif self.game.playing:
             turn = self.game.get_turn().get_user()
@@ -137,10 +140,8 @@ class duel_view(View):
         if interaction:
             if not spellcast:
                 await interaction.response.edit_message(embed=embed, view=self)
-                self.game_interaction = interaction
             else:
                 await self.game_interaction.edit_original_response(embed=embed, view=self)
-                # await interaction.message.edit(embed=embed, view=self)
         else:
             return embed
     
@@ -219,9 +220,10 @@ class cast_spell_view(View):
 
         self.game.cast_spell(caster=self.game.get_turn(), casted=self.user_spells[0])
         
+        self.game.next_turn()
         await self.view.update_embed(interaction=self.original_interaction, spellcast=True)
         
-        return await interaction.response.send_message("test")
+        return await self.original_interaction.delete_original_response()
     
     async def btn2_callback(self, interaction:discord.Interaction):
         if interaction.user != self.user_spellbook.owner:
@@ -232,9 +234,10 @@ class cast_spell_view(View):
         
         self.game.cast_spell(caster=self.game.get_turn(), casted=self.user_spells[1])
         
+        self.game.next_turn()
         await self.view.update_embed(interaction=self.original_interaction, spellcast=True)
 
-        return await interaction.response.send_message("test")
+        return await self.original_interaction.delete_original_response()
     
     async def btn3_callback(self, interaction:discord.Interaction):
         if interaction.user != self.user_spellbook.owner:
@@ -245,9 +248,10 @@ class cast_spell_view(View):
         
         self.game.cast_spell(caster=self.game.get_turn(), casted=self.user_spells[2])
         
+        self.game.next_turn()
         await self.view.update_embed(interaction=self.original_interaction, spellcast=True)
 
-        return await interaction.response.send_message("test")
+        return await self.original_interaction.delete_original_response()
     
     async def btn4_callback(self, interaction:discord.Interaction):
         if interaction.user != self.user_spellbook.owner:
@@ -258,9 +262,10 @@ class cast_spell_view(View):
         
         self.game.cast_spell(caster=self.game.get_turn(), casted=self.user_spells[3])
         
+        self.game.next_turn()
         await self.view.update_embed(interaction=self.original_interaction, spellcast=True)
-
-        return await interaction.response.send_message("test")
+        
+        return await self.original_interaction.delete_original_response()
 
 class library_view(View):
     def __init__(self, ctx:commands.Context):

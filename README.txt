@@ -1,17 +1,15 @@
-Version 0.2.4 (Prerelease)
+Version 0.3.0 (Prerelease)
 
 Changelog:
-    Commands:
-    - Added /say command that lets you send a message to the bot for it to say
-    - Added a super secret dev command
-    - Added "lvl" as an alias for the level command
+    Bug reports:
+    - Added /bug_report command (only works as a slash command)
+    - Bug reports can be responed to or resolved by the dev
+    - Users who abuse bug reports can be blacklisted easily
+    - Bug reports have a few secret dev commands
+    - Bug reports have a 5 minute (300 second) cooldown
 
-    Fishing:
-    - Fish pond now has new and improved graphics
-
-    Modules:
-    - Added more functionality to banned_users and banned_words
-    - Added a message logger for the /say command
+    General:
+    - Moved developer-specific data to .env file (LOG_CHANNEL_ID)
 
 > Created by mega05
 
