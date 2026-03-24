@@ -1,15 +1,8 @@
-Version 0.3.0 (Prerelease)
+Version 0.3.1 (Prerelease)
 
 Changelog:
-    Bug reports:
-    - Added /bug_report command (only works as a slash command)
-    - Bug reports can be responed to or resolved by the dev
-    - Users who abuse bug reports can be blacklisted easily
-    - Bug reports have a few secret dev commands
-    - Bug reports have a 5 minute (300 second) cooldown
-
-    General:
-    - Moved developer-specific data to .env file (LOG_CHANNEL_ID)
+    Commands:
+    - say command now shows up in the context menu so messages can be replied to
 
 > Created by mega05
 

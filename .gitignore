@@ -4,3 +4,7 @@ cogs/__pycache__
 __pycache__/
 user_data/
 .vscode/settings.json
+cogs/test_2.py
+cogs/test_3.py
+cogs/test_4.py
+BaseLayoutView.py
