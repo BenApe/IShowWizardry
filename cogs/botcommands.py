@@ -7,7 +7,7 @@ from datetime import datetime
 from discord.ext import commands
 from discord import app_commands
 from log import log_message
-from discord.ui import Modal, TextInput
+from discord.ui import Modal, TextInput, Checkbox, Label
 
 class botcommands(commands.Cog):
     def __init__(self, bot:commands.Bot):
@@ -178,6 +178,9 @@ class say_modal(Modal, title="Reply to a message"):
             required=True
         )
         self.add_item(self.reply)
+        
+        self.reply_ping = Label(text="Reply ping", component=Checkbox(default=True))
+        self.add_item(self.reply_ping)
     
     async def on_submit(self, interaction: discord.Interaction):
         user = interaction.user
@@ -202,7 +205,7 @@ class say_modal(Modal, title="Reply to a message"):
             if banned.isprofane(word):
                 return await user.send(f"The word '{word}' is not permitted.")
         
-        await self.message.reply(reply)
+        await self.message.reply(reply, mention_author=self.reply_ping.component.value)
         await interaction.response.send_message("Reply sent!", ephemeral=True, delete_after=1)
 
 async def setup(bot):
