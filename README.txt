@@ -1,8 +1,8 @@
-Version 0.3.1 (Prerelease)
+Version 0.3.2 (Prerelease)
 
 Changelog:
     Commands:
-    - say command now shows up in the context menu so messages can be replied to
+    - Moved the context menu version of the say command to a different file since it uses experimental features and may casue issues when loading the file
 
 > Created by mega05
 

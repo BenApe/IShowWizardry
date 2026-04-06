@@ -1,4 +1,4 @@
-VERSION = "0.3.1"
+VERSION = "0.3.2"
 
 import discord
 import json
@@ -44,7 +44,8 @@ async def on_ready():
         "cogs.dice",
         "cogs.levels",
         "cogs.userinventory",
-        "cogs.bugreport"
+        "cogs.bugreport",
+        "cogs.contextmenu"
     ]
     
     print("Jello World!")
