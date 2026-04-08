@@ -39,7 +39,13 @@ class starboard(commands.Cog):
                 await view.update_container(rxn_ct)
                 board_message = await board_chnl.send(view=view)
                 #rxn_emoji = await self.bot.fet
-                await board_message.add_reaction(board_emoji)
+                
+                try:
+                    emoji = Emoji.emojize(board_emoji)
+                except:
+                    emoji = board_emoji
+                
+                await board_message.add_reaction(emoji)
                 server_board.update({message_id: {"rxn_ct": rxn_ct, "board_msg": board_message.id, "chnl": message.channel.id}})
             else:
                 view = board_view.from_message(board_message=board_msg, original_message=message, emoji=board_emoji)

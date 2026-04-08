@@ -1,10 +1,8 @@
-Version 0.4.0 (Prerelease)
+Version 0.4.1 (Prerelease)
 
 Changelog:
     Starboard:
-    - Added a starboard with customizable emoji and reaction threshold
-    - Added the /starboard_setup command
-
+    - Fixed starboard not working with default emojis
 > Created by mega05
 
 Prefixes: 'cast ', '~'
