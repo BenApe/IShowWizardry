@@ -1,4 +1,4 @@
-VERSION = "0.3.2"
+VERSION = "0.4.0"
 
 import discord
 import json
@@ -45,7 +45,8 @@ async def on_ready():
         "cogs.levels",
         "cogs.userinventory",
         "cogs.bugreport",
-        "cogs.contextmenu"
+        "cogs.contextmenu",
+        "cogs.starboard"
     ]
     
     print("Jello World!")
@@ -112,6 +113,9 @@ async def help(ctx:commands.Context, command_name:str=None):
         "Levels & XP":{
             "level": "Get your Wizard Level.",
             "edit_level": "MOD ONLY - Edit a user's level or xp amount. Changing level will set xp to the minimum for that level."
+        },
+        "Server Setup":{
+            "starboard_setup": "Setup the starboard in your server."
         }
     }
     
