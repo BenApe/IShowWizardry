@@ -108,28 +108,53 @@ class starboard(commands.Cog):
     async def starboard_setup(self, interaction:discord.Interaction):
         await interaction.response.send_modal(setup_modal(interaction))
     
+    @commands.hybrid_command(name="starboard_info", description="View the starboard config in this server.")
+    async def starboard_info(self, ctx: commands.Context):
+        server_id = ctx.guild.id
+        info = ""
+        try:
+            config = loadjson(f"server_data/starboard/{server_id}").get(0)
+            emoji = config.get("emoji")
+            channel_id = config.get("chnl")
+            threshold = config.get("threshold")
+            info = f"**Emoji:** {emoji}\n**Channel:** <#{channel_id}>\n**Threshold:** {threshold}"
+        except:
+            info = "The starboard in this server isn't set up yet! Use </starboard_setup:1491256776320880730> to set up the starboard."
+        
+        embed = discord.Embed(
+            title=f"Starboard for {ctx.guild.name}",
+            description=info,
+            color=0xF1C40F
+        )
+        
+        await ctx.send(embed=embed)
+    
     @starboard_setup.error
     async def setup_error(self, interaction: discord.Interaction, error: app_commands.AppCommandError):
         if isinstance(error, app_commands.MissingPermissions):
             await interaction.response.send_message("You don't have permission to run this command! (Required permissions: manage channels)", ephemeral=True)
     
     @commands.Cog.listener()
-    async def on_reaction_add(self, reaction: discord.Reaction, user: discord.User):
+    async def on_raw_reaction_add(self, reaction: discord.RawReactionActionEvent):
+        user = reaction.member
         if user.bot:
             return
         
-        message = reaction.message
+        message_id = reaction.message_id
+        channel_id = reaction.channel_id
+        server_id = reaction.guild_id
+        channel = await self.bot.fetch_channel(channel_id)
+        message = await channel.fetch_message(message_id)
         author = message.author
         reactions = message.reactions
-        server_id = message.guild.id
         server_board = loadjson(f"server_data/starboard/{server_id}")
         emoji = ""
         
-        if reaction.is_custom_emoji():
+        if reaction.emoji.is_custom_emoji():
             emoji = f"<:{reaction.emoji.name}:{reaction.emoji.id}>"
         
         else:
-            emoji = Emoji.demojize(reaction.emoji)
+            emoji = Emoji.demojize(reaction.emoji.name)
         
         try:
             config = server_board.get(0)
@@ -148,7 +173,7 @@ class starboard(commands.Cog):
             rxn_ct = 0
         else:
             rxn_ct = len(reacters)
-        
+            
             if author in reacters:
                 rxn_ct -= 1
         
@@ -163,24 +188,29 @@ class starboard(commands.Cog):
         
         if rxn_ct >= rxn_threshold:
             await self.update_board(server_id, message, rxn_ct, config)
-    
+
     @commands.Cog.listener()
-    async def on_reaction_remove(self, reaction: discord.Reaction, user: discord.User):
+    async def on_raw_reaction_remove(self, reaction: discord.RawReactionActionEvent):
+        user_id = reaction.user_id
+        user = await self.bot.fetch_user(user_id)
         if user.bot:
             return
         
-        message = reaction.message
+        message_id = reaction.message_id
+        channel_id = reaction.channel_id
+        server_id = reaction.guild_id
+        channel = await self.bot.fetch_channel(channel_id)
+        message = await channel.fetch_message(message_id)
         author = message.author
         reactions = message.reactions
-        server_id = message.guild.id
         server_board = loadjson(f"server_data/starboard/{server_id}")
         emoji = ""
         
-        if reaction.is_custom_emoji():
+        if reaction.emoji.is_custom_emoji():
             emoji = f"<:{reaction.emoji.name}:{reaction.emoji.id}>"
         
         else:
-            emoji = Emoji.demojize(reaction.emoji)
+            emoji = Emoji.demojize(reaction.emoji.name)
         
         try:
             config = server_board.get(0)
@@ -198,7 +228,7 @@ class starboard(commands.Cog):
             rxn_ct = 0
         else:
             rxn_ct = len(reacters)
-        
+            
             if author in reacters:
                 rxn_ct -= 1
         
@@ -208,14 +238,11 @@ class starboard(commands.Cog):
             og_reacters = await self.get_reacters(og_msg.reactions, board_emoji)
             combined_reacters = await self.combine_rxn_lists(og_reacters, reacters, og_msg.author)
             rxn_ct = len(combined_reacters)
-            
-            if rxn_ct <= 0:
-                return await message.delete()
-            
-            return await view.update_container(rxn_ct, message)
-        
-        await self.update_board(server_id=server_id, message=message, rxn_ct=rxn_ct, config=config)
+            await view.update_container(rxn_ct, message)
+            return
 
+        await self.update_board(server_id=server_id, message=message, rxn_ct=rxn_ct, config=config)
+    
 class board_view(LayoutView):
     def __init__(self, message: discord.Message, emoji: str):
         super().__init__()
@@ -338,10 +365,10 @@ class setup_modal(Modal, title="Starboard Setup"):
         )
         self.add_item(self.rxn_emoji)
         
-        self.note = TextDisplay(
-            "-# If your emoji is a default emoji, just enter the emoji's name surrounded by ':'.\n-# If your emoji is custom, it should be formatted like this: '<:[name]:[emoji id]>'. You can find the emoji's id by typing '\\\\' in the message box then entering the emoji."
+        self.note1 = TextDisplay(
+            "-# If your emoji is a default emoji, just enter the emoji's name surrounded by ':'. Some default emojis may have multiple names in discord, you find the official names [here](https://www.webfx.com/tools/emoji-cheat-sheet/).\n\n-# If your emoji is custom, it should be formatted like this: \n-# **<:[name]:[emoji id]>**\n-# You can find the emoji's id by typing '\\\\' in the message box then entering the emoji."
         )
-        self.add_item(self.note)
+        self.add_item(self.note1)
         
         self.rxn_threshold = TextInput(
             label="How many reactions should be required?",
@@ -353,6 +380,11 @@ class setup_modal(Modal, title="Starboard Setup"):
         
         self.board_chnl = Label(text="What channel should messages be sent to?", component=chnl_dropdown())
         self.add_item(self.board_chnl)
+        
+        self.note2 = TextDisplay(
+            "-# The bot needs to have access to channels for them to appear in this list."
+        )
+        self.add_item(self.note2)
     
     async def on_submit(self, interaction: discord.Interaction):
         try:
@@ -372,12 +404,4 @@ class setup_modal(Modal, title="Starboard Setup"):
             await interaction.response.send_message(f"Error saving config: {e}", ephemeral=True)
 
 async def setup(bot: commands.Bot):
-    for guild in bot.guilds:
-        server_id = guild.id
-        server_board = loadjson(f"server_data/starboard/{server_id}")
-        config = server_board.get(0)
-        server_board = {}
-        server_board.update({0: config})
-        savejson(f"server_data/starboard/{server_id}", server_board)
-    
     await bot.add_cog(starboard(bot))

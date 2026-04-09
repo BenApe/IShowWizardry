@@ -100,3 +100,20 @@ def get_discord_timestamp(iso_time:str, style="R", increment_minutes:int = 0):
     timestamp = int(time.timestamp())
     
     return f"<t:{timestamp}:{style}>"
+
+def paginate(items: list, per_page: int):
+    pages = []
+    page_ct = len(items) // per_page
+    
+    for page_num in range(page_ct + 1):
+        page = []
+        for entry_num in range(per_page):
+            try:
+                n = (per_page * page_num) + entry_num
+                entry = items[n]
+                page.append(entry)
+            except:
+                break
+        pages.append(page)
+    
+    return pages

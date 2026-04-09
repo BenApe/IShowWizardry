@@ -1,4 +1,4 @@
-VERSION = "0.4.1"
+VERSION = "0.4.2"
 
 import discord
 import json
@@ -108,7 +108,7 @@ async def help(ctx:commands.Context, command_name:str=None):
             "fish_pool": "Check how many fish you have in your pond. Aliases: 'pool', 'pond'",
             "ponder": "Have your fortune read.",
             "inventory": "Get your spells and fish (only fish works right now). Aliases: 'inv', 'i'",
-            "say": "IShowWizardy will say the message you give it."
+            "say": "IShowWizardry will say the message you give it."
         },
         "Levels & XP":{
             "level": "Get your Wizard Level.",

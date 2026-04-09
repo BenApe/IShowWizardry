@@ -1,8 +1,11 @@
-Version 0.4.1 (Prerelease)
+Version 0.4.2 (Prerelease)
 
 Changelog:
     Starboard:
-    - Fixed starboard not working with default emojis
+    - Added some details to the starboard_setup command
+    - Starboard now works with any message ever sent in the server, not just messages stored in cache
+    - Added /starboard_info command (shows starboard config)
+
 > Created by mega05
 
 Prefixes: 'cast ', '~'
