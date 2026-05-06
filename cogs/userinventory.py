@@ -3,7 +3,7 @@ import response
 
 from discord.ext import commands
 from discord.ui import Button, View
-from botutils import savejson, loadjson
+from botutils import savejson, loadjson, paginate
 
 class userinventory(commands.Cog):
     def __init__(self, bot):
@@ -38,6 +38,9 @@ class invView(View):
         self.user = user
         self.user_id = user.id
         self.page = page
+        self.sub_pages = []
+        self.page_num = 0
+        self.page_ct = None
     
     def get_home_embed(self):
         embed = discord.Embed(
@@ -63,6 +66,7 @@ class invView(View):
         fish_path = f"user_data/fish/{self.user_id}"
         user_fish = loadjson(fish_path)
         
+        fish_list = []
         fishes = ""
         
         for fish in user_fish:
@@ -72,9 +76,18 @@ class invView(View):
             size = fishyfishy.get("size")
             value = fishyfishy.get("value")
             
-            fishes += f"**{name} ({value} Mana)**\n> Rarity: {rarity}\n> Size: {size}\n-# `ID: {fish}`\n\n"
+            fish_list.append(f"**{name} ({value} Mana)**\n> Rarity: {rarity}\n> Size: {size}\n-# `ID: {fish}`\n\n")
         
-        fishes = "You don't have any fish! use `/fishing_rod` to catch some fish." if fishes == "" else fishes
+        if fish_list == []:
+            fish_list.append("You don't have any fish! use `/fishing_rod` to catch some fish.")
+        
+        self.sub_pages = paginate(fish_list, 5)
+        self.page_ct = len(self.sub_pages) - 1
+        
+        sub_page = self.sub_pages[self.page_num]
+        
+        for entry in sub_page:
+            fishes += entry
     
         embed = discord.Embed(
             description=fishes,
@@ -84,6 +97,23 @@ class invView(View):
         embed.set_footer(text="Page: Fish")
         
         return embed
+    
+    def create_page_btns(self):
+        left_btn = Button(style=discord.ButtonStyle.blurple, emoji="◀️")
+        if self.page_num == 0:
+            left_btn.disabled = True
+        left_btn.callback = self.left_callback
+        self.add_item(left_btn)
+
+        page_btn = Button(style=discord.ButtonStyle.gray, label=(self.page_num + 1), disabled=True)
+        page_btn.callback = self.page_num_callback
+        self.add_item(page_btn)
+        
+        right_btn = Button(style=discord.ButtonStyle.blurple, emoji="▶️")
+        if self.page_num == self.page_ct:
+            right_btn.disabled = True
+        right_btn.callback = self.right_callback
+        self.add_item(right_btn)
     
     async def update_embed(self, interaction:discord.Interaction = None):
         embed = None
@@ -127,6 +157,8 @@ class invView(View):
             refresh_btn = Button(label="🔄️", style=discord.ButtonStyle.gray)
             refresh_btn.callback = self.refresh_callback
             self.add_item(refresh_btn)
+            
+            self.create_page_btns()
         
         if interaction:
             await interaction.response.edit_message(embed=embed, view=self)
@@ -160,6 +192,25 @@ class invView(View):
             return await interaction.response.send_message(response.wrong_press().response, ephemeral=True)
         
         await self.update_embed(interaction=interaction)
+    
+    async def left_callback(self, interaction:discord.Interaction):
+        self.page_num -= 1
+        
+        if not interaction.response.is_done():
+            await self.update_embed(interaction)
+        else:
+            await interaction.followup.send("This interaction expired.", ephemeral=True)
+    
+    async def right_callback(self, interaction:discord.Interaction):
+        self.page_num += 1
+        
+        if not interaction.response.is_done():
+            await self.update_embed(interaction)
+        else:
+            await interaction.followup.send("This interaction expired.", ephemeral=True)
+    
+    async def page_num_callback(self, interaction: discord.Interaction):
+        await interaction.response.send_message("You can't do that!", ephemeral=True)
     
 async def setup(bot):
     await bot.add_cog(userinventory(bot))

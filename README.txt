@@ -1,10 +1,15 @@
-Version 0.4.2 (Prerelease)
+Version 0.4.3 (Prerelease)
 
 Changelog:
     Starboard:
-    - Added some details to the starboard_setup command
-    - Starboard now works with any message ever sent in the server, not just messages stored in cache
-    - Added /starboard_info command (shows starboard config)
+    - Starboard now mostly supports message references (replies and forwarded messages)
+        - Does not support forwarded messages from places the bot can't access
+        - Does not support references to messages not in the bot's cache
+        - Does not support images in referenced messages
+    - Starboard now remembers preferences when using config command
+
+    User Inventory:
+    - User inventory is now paginated
 
 > Created by mega05
 

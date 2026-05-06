@@ -35,7 +35,7 @@ class starboard(commands.Cog):
         
         elif rxn_ct >= board_threshold:
             if board_msg == -1:
-                view = board_view(message, board_emoji)
+                view = board_view(message, board_emoji, self.bot)
                 await view.update_container(rxn_ct)
                 board_message = await board_chnl.send(view=view)
                 #rxn_emoji = await self.bot.fet
@@ -106,7 +106,11 @@ class starboard(commands.Cog):
     @app_commands.command(name="starboard_setup", description="(MOD) Setup the starboard for this server.")
     @app_commands.checks.has_permissions(manage_channels=True)
     async def starboard_setup(self, interaction:discord.Interaction):
-        await interaction.response.send_modal(setup_modal(interaction))
+        server_id = interaction.guild.id
+        config = loadjson(f"server_data/starboard/{server_id}").get(0) or {"emoji": ":star:", "chnl": None, "threshold": 4}
+        channel = interaction.guild.get_channel(config.get("chnl"))
+        
+        await interaction.response.send_modal(setup_modal(interaction, config, channel))
     
     @commands.hybrid_command(name="starboard_info", description="View the starboard config in this server.")
     async def starboard_info(self, ctx: commands.Context):
@@ -179,7 +183,7 @@ class starboard(commands.Cog):
         
         if author.bot and message.channel.id == board_chnl_id and author == self.bot.user:
             og_msg = await self.find_original(message.id, server_board)
-            view = board_view.from_message(board_message=message, original_message=og_msg, emoji=board_emoji)
+            view = board_view.from_message(board_message=message, original_message=og_msg, emoji=board_emoji, bot=self.bot)
             og_reacters = await self.get_reacters(og_msg.reactions, board_emoji)
             combined_reacters = await self.combine_rxn_lists(og_reacters, reacters, og_msg.author)
             rxn_ct = len(combined_reacters)
@@ -244,14 +248,16 @@ class starboard(commands.Cog):
         await self.update_board(server_id=server_id, message=message, rxn_ct=rxn_ct, config=config)
     
 class board_view(LayoutView):
-    def __init__(self, message: discord.Message, emoji: str):
+    def __init__(self, message: discord.Message, emoji: str, bot: commands.Bot):
         super().__init__()
         self.message = message
         self.attachments = [attachment.url for attachment in message.attachments]
         self.timestamp = get_discord_timestamp(self.message.created_at.isoformat(), 'f')
         self.emoji = emoji
+        self.bot = bot
         self.embed_content = ""
         self.message_content = ""
+        self.ref_content = ""
 
         if ".gif" in self.message.content:
             for word in self.message.content.split():
@@ -275,10 +281,45 @@ class board_view(LayoutView):
         if message.clean_content:
             self.message_content += message.clean_content
             
-        self.message_content += f"\n{self.embed_content}"
+        if message.reference:
+            type = message.reference.type
+            ref_msg = message.reference.cached_message
+            
+            if ref_msg:
+                if type == discord.MessageReferenceType.default:
+                    self.ref_content = f"-# Reply to {ref_msg.author.mention}\n"
+                    
+                elif type == discord.MessageReferenceType.forward:
+                    self.ref_content = f"-# Forwarded from {ref_msg.author.mention}\n"
+                
+                if ref_msg.clean_content:
+                    self.ref_content += ref_msg.clean_content
+                
+                if ref_msg.embeds:
+                    for embed in ref_msg.embeds:
+                        self.ref_content += f"### {embed.title}\n" if embed.title else " "
+                        self.ref_content += f"{embed.description}\n" if embed.description else " "
+                        
+                        if embed.image:
+                            self.attachments.append(embed.image.url)
+                        
+                        if embed.fields:
+                            for field in embed.fields:
+                                name = f"**{field.name}**"
+                                value = f"{field.value}"
+                                self.ref_content += f"{name}\n{value}\n"
+            
+            else:
+                self.ref_content = "Reference message missing from cache or could not be accessed."
+        
+        self.message_content += f"\n{self.embed_content}\n{self.ref_content}"
+            
     
     async def update_container(self, rxn_ct:int, board_msg: discord.Message = None):
         self.clear_items()
+        
+        if self.message_content == None:
+            return
         
         if self.attachments and (self.message.clean_content or self.embed_content):
             container = Container(
@@ -345,21 +386,28 @@ class attachment_view(MediaGallery):
         super().__init__(*[discord.MediaGalleryItem(attachment) for attachment in attachments])
 
 class chnl_dropdown(ChannelSelect):
-    def __init__(self):
-        super().__init__(channel_types=[discord.ChannelType.text], required=True)
+    def __init__(self, channel = None):
+        if channel == None:
+            super().__init__(channel_types=[discord.ChannelType.text], required=True, placeholder="Choose a channel...", min_values=1, max_values=1)
+        else:
+            super().__init__(channel_types=[discord.ChannelType.text], required=True, default_values=[channel], placeholder="Choose a channel...", min_values=1, max_values=1)
     
     async def callback(self, interaction: discord.Interaction):
         selected_chnl = self.values[0]
         await interaction.response.send_message(selected_chnl)
 
 class setup_modal(Modal, title="Starboard Setup"):
-    def __init__(self, original_interaction: discord.Interaction):
+    def __init__(self, original_interaction: discord.Interaction, config: dict, channel):
         super().__init__()
         self.original_interaction = original_interaction
+        self.server_id = self.original_interaction.guild.id
+        self.config = config
+        emoji = self.config.get("emoji")
+        threshold = self.config.get("threshold")
         
         self.rxn_emoji = TextInput(
             label="What emoji should be used?",
-            default=":star:",
+            default=emoji,
             style=discord.TextStyle.short,
             required=True
         )
@@ -372,13 +420,13 @@ class setup_modal(Modal, title="Starboard Setup"):
         
         self.rxn_threshold = TextInput(
             label="How many reactions should be required?",
-            default="4",
+            default=threshold,
             style=discord.TextStyle.short,
             required=True
         )
         self.add_item(self.rxn_threshold)
         
-        self.board_chnl = Label(text="What channel should messages be sent to?", component=chnl_dropdown())
+        self.board_chnl = Label(text="What channel should messages be sent to?", component=chnl_dropdown(channel))
         self.add_item(self.board_chnl)
         
         self.note2 = TextDisplay(
