@@ -1,3 +1,16 @@
+## v0.5.1 Changelog - Leaderboards
+### Stats
+- /leaderboard added
+  - Allows you to view the top 20 users for a specific stat globally or in the current server
+- The secret dev command now scrapes the current starboard and updates user stats
+
+### Other
+- Commands will now throw specific errors for:
+  - Missing roles
+  - Missing permissions
+  - Cooldowns
+  - Bot owner-only commands
+
 ## v0.5.0 Changelog - The Stats Update
 ### Stats
 - The bot will now track stats for:
@@ -10,17 +23,6 @@
 - Added an MIT License
 - Changed the README to a .md file (looks beautiful now)
 - Removed unnecessary imports from multiple files
-
-## v0.4.3 Changelog - Improvements to Starboard and User Inventory
-### Starboard
-- Starboard now mostly supports message references (replies and forwarded messages)
-    - Does not support forwarded messages from places the bot can't access
-    - Does not support references to messages not in the bot's cache
-    - Does not support images in referenced messages
-- Starboard now remembers preferences when using config command
-
-### User Inventory
-- User inventory is now paginated
 
 > Created by mega05  
 > Version 0.5.0 (Prerelease)  

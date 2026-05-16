@@ -3,6 +3,7 @@ import json
 
 from botutils import loadjson, savejson, process_timer
 from datetime import datetime
+from discord import app_commands
 
 STATS_PAGE_LEN = 50
 DEFAULT_STATS = {
@@ -11,6 +12,12 @@ DEFAULT_STATS = {
     "fish_caught": 0,
     "times_pondered": 0
 }
+VALID_VALS = [
+    "stars_recieved",
+    "board_msgs",
+    "fish_caught",
+    "times_pondered"
+]
 
 def load_file_for_search(filepath: str):
     fp = f"{filepath}.json"
@@ -188,9 +195,44 @@ def fetch_file_ct():
     num_files = loadjson("user_data/stats/file_ct")[0]
     return num_files
 
+def collect_vals(value: str, sorted: bool = True):
+    """
+    ### Values:
+    
+    **'stars_recieved'** - The number of stars given to a user on messages sent to the star board
+    
+    **'board_msgs'** - The number of the user's messages sent to the star board
+    
+    **'fish_caught'** - The number of fish caught by the user
+    
+    **'times_pondered'** - The number of times the /ponder command was used
+    """
+    if value not in VALID_VALS: return
+    num_files = fetch_file_ct()
+    all_users = collect_users(num_files)
+    all_values = []
+    
+    for uid, stats in all_users:
+        target = stats.get(value)
+        if not target or target == 0: continue
+        all_values.append((uid, target))
+    
+    if sorted:
+        all_values.sort(key=lambda x: x[0])
+    
+    return all_values
+
+def get_value_choices():
+    choices = []
+    for val in VALID_VALS:
+        name = val.replace("_", " ").title()
+        choices.append(app_commands.Choice(name=name, value=val))
+    return choices
+
 class userstats():
     def __init__(self, user_id: int):
         self.user_id = user_id
+        self.valid_vals = VALID_VALS
     
     def get_stats(self):
         user_stats = search_stats_files(self.user_id, fetch_file_ct())
@@ -206,6 +248,23 @@ class userstats():
         if not updated:
             add_user(self.user_id, fetch_file_ct(), user_stats)
     
+    def get_value(self, value: str):
+        """
+        ### Values:
+        
+        **'stars_recieved'** - The number of stars given to a user on messages sent to the star board
+        
+        **'board_msgs'** - The number of the user's messages sent to the star board
+        
+        **'fish_caught'** - The number of fish caught by the user
+        
+        **'times_pondered'** - The number of times the /ponder command was used
+        """
+        if value not in self.valid_vals: return
+        user_stats = self.get_stats()
+        value = user_stats.setdefault(value, 0)
+        return value
+    
     def update_value(self, value: str, set: int = None, change: int = 0):
         """
         ### Values:
@@ -218,8 +277,10 @@ class userstats():
         
         **'times_pondered'** - The number of times the /ponder command was used
         """
+        if value not in self.valid_vals: return
+        
         user_stats = self.get_stats()
-        total = user_stats.get(value) + change
+        total = user_stats.setdefault(value, 0) + change
         
         if set:
             total = set + change
@@ -229,7 +290,6 @@ class userstats():
     
     def to_string(self):
         user_stats = self.get_stats()
-        print(user_stats)
         stats_str = ""
         
         for label in user_stats.keys():

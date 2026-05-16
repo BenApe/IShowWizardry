@@ -2,6 +2,7 @@ import json
 import random
 
 from datetime import datetime, timedelta
+from pathlib import Path
 
 def keygen(dict:dict):
     key = random.randint(0, 1000000)
@@ -115,6 +116,19 @@ def paginate(items: list, per_page: int):
         pages.append(page)
     
     return pages
+
+def grab_filenames(dir: str = "."):
+    folder = Path(dir)
+    names = [str(f) for f in folder.iterdir() if f.is_file()]
+    return names
+
+def ordinal(n: int):
+    if 11 <= (n % 100) <= 13:
+        suffix = "th"
+    else:
+        suffix = {1: "st", 2: "nd", 3: "rd"}.get(n % 10, "th")
+    
+    return f"{n}{suffix}"
 
 class process_timer():
     def __init__(self):

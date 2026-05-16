@@ -1,4 +1,4 @@
-VERSION = "0.5.0"
+VERSION = "0.5.1"
 
 import discord
 import os
@@ -83,9 +83,30 @@ async def on_ready():
 
 if not debug_mode:
     @bot.event
-    async def on_command_error(ctx, error):
-        print(f"Command error: {error}")
-        # await ctx.reply(f"Command error: {error}", ephemeral=True)
+    async def on_command_error(ctx: commands.Context, error):
+        if isinstance(error, commands.MissingPermissions):
+            missing = ", ".join(error.missing_permissions)
+            await ctx.send(f"You're missing the required permissions to run this command: {missing}.")
+        
+        elif isinstance(error, commands.BotMissingPermissions):
+            missing = ", ".join(error.missing_permissions)
+            await ctx.send(f"I'm missing the required permissions to run this command: {missing}.")
+        
+        elif isinstance(error, commands.MissingRole):
+            await ctx.send(f"You need the following role to run this command: {error.missing_role}.")
+        
+        elif isinstance(error, commands.MissingAnyRole):
+            missing = ", ".join(error.missing_roles)
+            await ctx.send(f"You need one of the following roles to run this command: {missing}.")
+        
+        elif isinstance(error, commands.NotOwner):
+            await ctx.send("fuck you lmao")
+        
+        elif isinstance(error, commands.CommandOnCooldown):
+            await ctx.send(f"Command on cooldown. Try again in {error.retry_after:.1f} seconds.")
+        
+        else:
+            print(f"Command error: {error}")
 
     @bot.event
     async def on_error(event):
