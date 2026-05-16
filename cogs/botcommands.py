@@ -7,6 +7,7 @@ from datetime import datetime
 from discord.ext import commands
 from discord import app_commands
 from log import log_message
+from userstats import userstats
 
 class botcommands(commands.Cog):
     def __init__(self, bot:commands.Bot):
@@ -15,9 +16,6 @@ class botcommands(commands.Cog):
     @commands.hybrid_command(name="ponder", description="Ponder")
     async def ponder(self, ctx:commands.Context):
         user = ctx.author
-        if isinstance(ctx, discord.Interaction):
-            user = ctx.user
-        
         username = user.mention
         
         ponderings = [
@@ -74,6 +72,8 @@ class botcommands(commands.Cog):
         full_ponder = random.choice(ponderings) + " " + random.choice(postponderings)
         
         await ctx.reply(full_ponder)
+        statsuser = userstats(user.id)
+        statsuser.update_value(value="times_pondered", change=1)
     
     @commands.hybrid_command(name="ping", description="Check IShowWizardry's latency")
     async def ping(self, ctx:commands.Context):
@@ -90,14 +90,18 @@ class botcommands(commands.Cog):
     @commands.hybrid_command(name="changelog", description="Get the bot's changelog")
     async def changelog(self, ctx:commands.Context):
         try:
-            with open("README.txt", 'r', encoding='utf-8') as file:
+            with open("README.md", 'r', encoding='utf-8') as file:
                 content = file.read()
                 
                 if len(content) > 1900:
-                    await ctx.send(file=discord.File("README.txt"))
+                    await ctx.send(file=discord.File("README.md"))
                 
                 else:
-                    await ctx.send(f"```\n{content}\n```")
+                    embed = discord.Embed(
+                        title="Changelog",
+                        description=content
+                    )
+                    await ctx.send(embed=embed)
         
         except FileNotFoundError:
             await ctx.send("Sorry, the changelog is missing.")
@@ -155,6 +159,23 @@ class botcommands(commands.Cog):
                 return await user.send(f"The word '{word}' is not permitted.")
         
         await channel.send(message)
+"""    
+    @commands.hybrid_command(name="ship", description="(temp) ship 2 users")
+    async def ship(self, ctx:commands.Context, person_1, person_2):
+        try:
+            name1 = self.bot.get_user(int(person_1[2:len(person_1) - 1])).display_name
+        except:
+            name1 = person_1
+        
+        try:
+            name2 = self.bot.get_user(int(person_2[2:len(person_2) - 1])).display_name
+        except:
+            name2 = person_2
+            
+        str_length = len(max(name1, name2)) // 2
+        
+        await ctx.reply(f":heart: Ship name is: {name1[:str_length]}{name2[str_length:]} ({person_1} + {person_2}) :heart:\nCompatability: {random.randint(0, 100)}%")
+"""
     
 async def setup(bot):
     await bot.add_cog(botcommands(bot))

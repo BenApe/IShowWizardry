@@ -1,11 +1,9 @@
 import discord
-import math
 import userlevel
 
 from userlevel import lvl_to_xp, xp_to_lvl
 from discord.ext import commands
 from discord import app_commands
-from botutils import loadjson, savejson
 
 # Mana is won from wizard duels and earned by selling fish
 # 1 mana gained = 1 xp
@@ -16,7 +14,7 @@ class levels(commands.Cog):
         self.bot = bot
         
     # MOD COMMANDS
-    @commands.hybrid_command(name="edit_level", description="(MOD) Edit a user's level or xp")
+    @commands.hybrid_command(name="edit_level", description="(MOD) Edit a user's level or xp.")
     @commands.has_permissions(kick_members=True)
     @app_commands.choices(
         action=[

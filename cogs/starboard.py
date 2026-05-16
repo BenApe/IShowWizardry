@@ -1,11 +1,11 @@
 import discord
 import emoji as Emoji
 
-from datetime import datetime
 from discord.ext import commands
 from discord import app_commands
-from discord.ui import ActionRow, Button, Container, Separator, LayoutView, TextDisplay, Modal, TextInput, Label, ChannelSelect, Section, MediaGallery
+from discord.ui import Button, Container, Separator, LayoutView, TextDisplay, Modal, TextInput, Label, ChannelSelect, Section, MediaGallery
 from botutils import savejson, loadjson, get_discord_timestamp
+from userstats import userstats
 
 class starboard(commands.Cog):
     def __init__(self, bot:commands.Bot):
@@ -38,7 +38,6 @@ class starboard(commands.Cog):
                 view = board_view(message, board_emoji, self.bot)
                 await view.update_container(rxn_ct)
                 board_message = await board_chnl.send(view=view)
-                #rxn_emoji = await self.bot.fet
                 
                 try:
                     emoji = Emoji.emojize(board_emoji)
@@ -172,6 +171,7 @@ class starboard(commands.Cog):
         if emoji != board_emoji:
             return
         
+        statsuser = userstats(author.id)
         reacters = await self.get_reacters(reactions, board_emoji)
         if reacters == None:
             rxn_ct = 0
@@ -182,6 +182,7 @@ class starboard(commands.Cog):
                 rxn_ct -= 1
         
         if author.bot and message.channel.id == board_chnl_id and author == self.bot.user:
+            statsuser.update_value(value="stars_recieved", change=1)
             og_msg = await self.find_original(message.id, server_board)
             view = board_view.from_message(board_message=message, original_message=og_msg, emoji=board_emoji, bot=self.bot)
             og_reacters = await self.get_reacters(og_msg.reactions, board_emoji)
@@ -191,6 +192,8 @@ class starboard(commands.Cog):
             return
         
         if rxn_ct >= rxn_threshold:
+            statsuser.update_value(value="stars_recieved", set=rxn_ct)
+            statsuser.update_value(value="board_msgs", change=1)
             await self.update_board(server_id, message, rxn_ct, config)
 
     @commands.Cog.listener()
@@ -310,7 +313,7 @@ class board_view(LayoutView):
                                 self.ref_content += f"{name}\n{value}\n"
             
             else:
-                self.ref_content = "Reference message missing from cache or could not be accessed."
+                self.ref_content = "-# Reference message missing from cache or could not be accessed."
         
         self.message_content += f"\n{self.embed_content}\n{self.ref_content}"
             

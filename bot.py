@@ -1,13 +1,10 @@
-VERSION = "0.4.3"
+VERSION = "0.5.0"
 
 import discord
-import json
 import os
-import asyncio
 
 from discord.ext import commands
 from dotenv import load_dotenv
-from discord import app_commands
 
 load_dotenv(dotenv_path=".env")
 BOT_TOKEN = os.getenv("BOT_TOKEN")
@@ -46,7 +43,8 @@ async def on_ready():
         "cogs.userinventory",
         "cogs.bugreport",
         "cogs.contextmenu",
-        "cogs.starboard"
+        "cogs.starboard",
+        "cogs.stats"
     ]
     
     print("Jello World!")
@@ -100,7 +98,8 @@ async def help(ctx:commands.Context, command_name:str=None):
             "help": "Shows this message. You can also specify a command to get its description. Aliases: 'h', 'commands'",
             "ping": "Check the bot's latency.",
             "changelog": "See what has changed in the most recent update.",
-            "bug_report": "Submit a bug report to the dev (slash command only)"
+            "bug_report": "Submit a bug report to the dev (slash command only).",
+            "stats": "View stats for yourself or someone else."
         },
         "Fun":{
             "die": "Roll a die with as many sides as you want.",

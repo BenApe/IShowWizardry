@@ -1,9 +1,7 @@
 import json
 import random
-import discord
 
-from discord.ext import commands
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 
 def keygen(dict:dict):
     key = random.randint(0, 1000000)
@@ -79,7 +77,7 @@ def savejson(file_name, data):
 
 def get_discord_timestamp(iso_time:str, style="R", increment_minutes:int = 0):
     """
-    ## Styles:
+    ### Styles:
     
     't' - Short time (e.g., 16:20)
     
@@ -117,3 +115,16 @@ def paginate(items: list, per_page: int):
         pages.append(page)
     
     return pages
+
+class process_timer():
+    def __init__(self):
+        self.start_time = datetime.now()
+        self.end_time = None
+    
+    def start(self):
+        self.start_time = datetime.now()
+    
+    def end(self, description):
+        self.end_time = datetime.now()
+        delta = self.end_time - self.start_time
+        print(f"{self.end_time.strftime("%d/%m/%Y %H:%M:%S")} | {description} ({round(delta.total_seconds() * 1000)}ms).")

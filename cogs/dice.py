@@ -1,8 +1,6 @@
-import discord
 import random
 
 from discord.ext import commands
-from discord import app_commands
 
 class dice(commands.Cog):
     def __init__(self, bot):

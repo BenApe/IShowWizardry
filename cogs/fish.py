@@ -3,9 +3,10 @@ import random
 import userlevel
 
 from discord.ext import commands, tasks
-from discord import app_commands
-from datetime import datetime, timedelta, timezone
+from datetime import datetime
 from botutils import savejson, loadjson, get_discord_timestamp, keygen
+from userstats import userstats
+
 POOL_CAP = 15
 
 class fishpool():
@@ -112,6 +113,9 @@ class fish(commands.Cog):
         key = keygen(user_fishes)
         user_fishes.update({key: fish})
         savejson(f"user_data/fish/{user_id}", user_fishes)
+        
+        statsuser = userstats(user_id)
+        statsuser.update_value(value="fish_caught", change=1)
     
     async def generate_pond(self, count:int, timestamp:str):
         pond_list = ["≈"] * 15
