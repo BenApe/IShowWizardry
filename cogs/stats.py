@@ -67,7 +67,9 @@ class stats(commands.Cog):
             member, val = member_vals[i]
             top20 += f"{i + 1}. {member.display_name} - **{val}**\n"
             if member.id == author.id: author_data = f"-# Your Positon: {ordinal(i + 1)} (score: {val})."
-            if i >= 20 and author_data != None: break
+            if i > 20:
+                if author_data != None: break
+                continue
         
         if author_data != None: top20 += author_data
         embed = discord.Embed(

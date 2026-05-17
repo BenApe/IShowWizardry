@@ -155,9 +155,10 @@ class botcommands(commands.Cog):
             }})
         
         for uid, data in user_changes.items():
+            print(uid, data)
             statsuser = userstats(uid)
-            statsuser.update_value(value="stars_recieved", change=data.get("rct"))
-            statsuser.update_value(value="board_msgs", change=data.get("msgs"))
+            statsuser.update_value(value="stars_recieved", set=data.get("rct"))
+            statsuser.update_value(value="board_msgs", set=data.get("msgs"))
         
         await ctx.send(f"Checked {fetches + fails} messages and updated starboard data for {len(user_changes)} users.\n-# Failed to fetch {fails} messages.")
         

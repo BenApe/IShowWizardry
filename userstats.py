@@ -180,6 +180,7 @@ def update_user(user_id: int, new_stats: dict, num_files: int):
         user_ids = sorted(mid_file.keys())
         if user_id in user_ids:
             mid_file[user_id].update(new_stats)
+            # print(mid_file[user_id])
             savejson(mid_fp, mid_file)
             return True
         
@@ -218,7 +219,7 @@ def collect_vals(value: str, sorted: bool = True):
         all_values.append((uid, target))
     
     if sorted:
-        all_values.sort(key=lambda x: x[0])
+        all_values.sort(key=lambda x: x[1], reverse=True)
     
     return all_values
 
@@ -280,7 +281,8 @@ class userstats():
         if value not in self.valid_vals: return
         
         user_stats = self.get_stats()
-        total = user_stats.setdefault(value, 0) + change
+        # total = user_stats.setdefault(value, 0) + change
+        total = user_stats.get(value, 0) + change
         
         if set:
             total = set + change

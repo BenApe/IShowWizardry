@@ -1,3 +1,7 @@
+## v0.5.2 Changelog - Bug Fixing
+- Leaderboard now shows the top 20 users (used to show top 21)
+- Fixed issue where the secret dev command would add to the user's starboard stats rather than set them
+
 ## v0.5.1 Changelog - Leaderboards
 ### Stats
 - /leaderboard added
@@ -10,19 +14,6 @@
   - Missing permissions
   - Cooldowns
   - Bot owner-only commands
-
-## v0.5.0 Changelog - The Stats Update
-### Stats
-- The bot will now track stats for:
-    - Number of messages on the starboard
-    - Number of stars on messages on the starboard
-    - Number of fish caught
-    - Number of times /ponder is used
-
-### Development Side
-- Added an MIT License
-- Changed the README to a .md file (looks beautiful now)
-- Removed unnecessary imports from multiple files
 
 > Created by mega05  
 > Version 0.5.0 (Prerelease)  
