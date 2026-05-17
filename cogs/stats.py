@@ -64,7 +64,7 @@ class stats(commands.Cog):
                 member_vals.append((member, val))
         
         for i in range(len(member_vals)):
-            if i > 20:
+            if i > 19:
                 if author_data != None: break
                 continue
             member, val = member_vals[i]
