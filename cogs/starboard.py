@@ -11,7 +11,7 @@ class starboard(commands.Cog):
     def __init__(self, bot:commands.Bot):
         self.bot = bot
     
-    async def update_board(self, server_id, message: discord.Message, rxn_ct, config):
+    async def update_board(self, server_id, message: discord.Message, rxn_ct, config, statsuser: userstats = None):
         message_id = message.id
         server_board = loadjson(file_name=f"server_data/starboard/{server_id}")
         msg_data = server_board.get(message_id) or {"rxn_ct": rxn_ct, "board_msg": -1, "chnl": message.channel.id}
@@ -34,8 +34,8 @@ class starboard(commands.Cog):
                 return
         
         elif rxn_ct >= board_threshold:
-            if board_msg == -1:
-                view = board_view(message, board_emoji, self.bot)
+            if board_msg == -1:     # The message has not been added to the board
+                view = board_view(message, board_emoji)
                 await view.update_container(rxn_ct)
                 board_message = await board_chnl.send(view=view)
                 
@@ -46,9 +46,11 @@ class starboard(commands.Cog):
                 
                 await board_message.add_reaction(emoji)
                 server_board.update({message_id: {"rxn_ct": rxn_ct, "board_msg": board_message.id, "chnl": message.channel.id}})
+                if statsuser: statsuser.update_values(values=("stars_recieved", "board_msgs"), change=(rxn_ct, 1))
             else:
                 view = board_view.from_message(board_message=board_msg, original_message=message, emoji=board_emoji)
                 await view.update_container(rxn_ct, board_msg)
+                if statsuser: statsuser.increment_value(value="stars_recieved")
         
         savejson(f"server_data/starboard/{server_id}", server_board)
     
@@ -182,19 +184,17 @@ class starboard(commands.Cog):
                 rxn_ct -= 1
         
         if author.bot and message.channel.id == board_chnl_id and author == self.bot.user:
-            statsuser.update_value(value="stars_recieved", change=1)
             og_msg = await self.find_original(message.id, server_board)
-            view = board_view.from_message(board_message=message, original_message=og_msg, emoji=board_emoji, bot=self.bot)
+            view = board_view.from_message(board_message=message, original_message=og_msg, emoji=board_emoji)
             og_reacters = await self.get_reacters(og_msg.reactions, board_emoji)
             combined_reacters = await self.combine_rxn_lists(og_reacters, reacters, og_msg.author)
             rxn_ct = len(combined_reacters)
             await view.update_container(rxn_ct, message)
+            statsuser.increment_value(value="stars_recieved")
             return
         
         if rxn_ct >= rxn_threshold:
-            statsuser.update_value(value="stars_recieved", set=rxn_ct)
-            statsuser.update_value(value="board_msgs", change=1)
-            await self.update_board(server_id, message, rxn_ct, config)
+            await self.update_board(server_id, message, rxn_ct, config, statsuser)
 
     @commands.Cog.listener()
     async def on_raw_reaction_remove(self, reaction: discord.RawReactionActionEvent):
@@ -251,13 +251,12 @@ class starboard(commands.Cog):
         await self.update_board(server_id=server_id, message=message, rxn_ct=rxn_ct, config=config)
     
 class board_view(LayoutView):
-    def __init__(self, message: discord.Message, emoji: str, bot: commands.Bot):
+    def __init__(self, message: discord.Message, emoji: str):
         super().__init__()
         self.message = message
         self.attachments = [attachment.url for attachment in message.attachments]
         self.timestamp = get_discord_timestamp(self.message.created_at.isoformat(), 'f')
         self.emoji = emoji
-        self.bot = bot
         self.embed_content = ""
         self.message_content = ""
         self.ref_content = ""

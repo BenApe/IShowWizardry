@@ -37,7 +37,7 @@ class stats(commands.Cog):
         ]
     )
     async def leaderboard(self, ctx:commands.Context, type:str, scope:str = "server"):
-        # timer = process_timer()
+        timer = process_timer()
         all_values = collect_vals(type)
         member_vals = []
         name = type.replace("_", " ").title()
@@ -78,9 +78,10 @@ class stats(commands.Cog):
             color=0x2ECC71
         )
         embed.set_author(name=title, icon_url=icon)
+        timer.end()
+        embed.set_footer(text=f"{timer.elapsed}ms")
         
         await ctx.send(embed=embed)
-        # timer.end(description=f"Created {scope} leaderboard. Processed {len(member_vals)} users")
 
 async def setup(bot):
     await bot.add_cog(stats(bot))

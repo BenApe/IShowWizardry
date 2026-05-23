@@ -134,11 +134,15 @@ class process_timer():
     def __init__(self):
         self.start_time = datetime.now()
         self.end_time = None
+        self.elapsed = 0
     
     def start(self):
         self.start_time = datetime.now()
     
-    def end(self, description):
+    def end(self, description: str = None):
         self.end_time = datetime.now()
         delta = self.end_time - self.start_time
-        print(f"{self.end_time.strftime("%d/%m/%Y %H:%M:%S")} | {description} ({round(delta.total_seconds() * 1000)}ms).")
+        self.elapsed = round(delta.total_seconds() * 1000)
+        
+        if description != None:
+            print(f"{self.end_time.strftime("%d/%m/%Y %H:%M:%S")} | {description} ({self.elapsed}ms).")

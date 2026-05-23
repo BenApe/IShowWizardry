@@ -44,7 +44,8 @@ async def on_ready():
         "cogs.bugreport",
         "cogs.contextmenu",
         "cogs.starboard",
-        "cogs.stats"
+        "cogs.stats",
+        "cogs.devcommands"
     ]
     
     print("Jello World!")
@@ -120,7 +121,8 @@ async def help(ctx:commands.Context, command_name:str=None):
             "ping": "Check the bot's latency.",
             "changelog": "See what has changed in the most recent update.",
             "bug_report": "Submit a bug report to the dev (slash command only).",
-            "stats": "View stats for yourself or someone else."
+            "stats": "View stats for yourself or someone else.",
+            "leaderboard": "View the global or server leaderboard for a specific stat."
         },
         "Fun":{
             "die": "Roll a die with as many sides as you want.",

@@ -290,6 +290,87 @@ class userstats():
         user_stats.update({value: total})
         self.update_stats(user_stats)
     
+    def update_values(self, values: tuple, set: tuple = None, change: tuple = (0, 0, 0)):
+        """
+        ### Values:
+        *Enter as a tuple with the name of each value to be updated*
+        
+        **'stars_recieved'** - The number of stars given to a user on messages sent to the star board
+        
+        **'board_msgs'** - The number of the user's messages sent to the star board
+        
+        **'fish_caught'** - The number of fish caught by the user
+        
+        **'times_pondered'** - The number of times the /ponder command was used
+        
+        ---
+        
+        ### Set:
+        *Enter as a tuple with numbers corresponding to each value. Use 'None' for values that shouldn't be updated.*
+        
+        ---
+        
+        ### Change:
+        *Enter as a tuple with numbers corresponding to each value.*
+        """
+        user_stats = self.get_stats()
+        
+        for i in range(len(values)):
+            val = values[i]
+            if val not in self.valid_vals: continue
+            
+            total = user_stats.get(val, 0) + change[i]
+            
+            if set and set[i]:
+                total = set[i] + change[i]
+            
+            user_stats.update({val: total})
+        
+        self.update_stats(user_stats)
+    
+    def increment_value(self, value: str):
+        """
+        ### Values:
+        
+        **'stars_recieved'** - The number of stars given to a user on messages sent to the star board
+        
+        **'board_msgs'** - The number of the user's messages sent to the star board
+        
+        **'fish_caught'** - The number of fish caught by the user
+        
+        **'times_pondered'** - The number of times the /ponder command was used
+        """
+        if value not in self.valid_vals: return
+        
+        user_stats = self.get_stats()
+        total = user_stats.get(value, 0) + 1
+        user_stats.update({value: total})
+        self.update_stats(user_stats)
+    
+    def increment_values(self, values: tuple):
+        """
+        ### Values:
+        *Enter as a tuple with the name of each value to be updated*
+        
+        **'stars_recieved'** - The number of stars given to a user on messages sent to the star board
+        
+        **'board_msgs'** - The number of the user's messages sent to the star board
+        
+        **'fish_caught'** - The number of fish caught by the user
+        
+        **'times_pondered'** - The number of times the /ponder command was used
+        """
+        user_stats = self.get_stats()
+        
+        for i in range(len(values)):
+            val = values[i]
+            if val not in self.valid_vals: continue
+            
+            total = user_stats.get(val, 0) + 1
+            user_stats.update({val: total})
+        
+        self.update_stats(user_stats)
+    
     def to_string(self):
         user_stats = self.get_stats()
         stats_str = ""
