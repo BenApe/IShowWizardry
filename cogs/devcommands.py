@@ -13,7 +13,11 @@ class devcmds(commands.Cog):
     @commands.is_owner()
     async def guild_list(self, ctx:commands.Context):
         guilds = list(self.bot.guilds)
-        guild_str = "**Bot Guilds:**" + "\n> ".join(guilds)
+        guild_str = "**Bot Guilds:**\n"
+        
+        for guild in guilds:
+            guild_str += f"> {guild}\n"
+        
         await ctx.send(guild_str)
     
     @commands.command(name="verify_stats")
