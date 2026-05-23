@@ -9,4 +9,3 @@
 ### Changelog/README
 - Moved changelog to a seperate file (used to be in the README)
 - README now has a list of features and a roadmap
-- This file will now hold a list of updates for the bot

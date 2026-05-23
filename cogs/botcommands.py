@@ -90,11 +90,11 @@ class botcommands(commands.Cog):
     @commands.hybrid_command(name="changelog", description="Get the bot's changelog")
     async def changelog(self, ctx:commands.Context):
         try:
-            with open("CHANGELOG.md", 'r', encoding='utf-8') as file:
+            with open("CHANGES.md", 'r', encoding='utf-8') as file:
                 content = file.read()
                 
                 if len(content) > 1900:
-                    await ctx.send(file=discord.File("README.md"))
+                    await ctx.send(file=discord.File("CHANGES.md"))
                 
                 else:
                     embed = discord.Embed(
