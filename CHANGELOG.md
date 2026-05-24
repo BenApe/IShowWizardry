@@ -1,3 +1,7 @@
+# Changelog
+## v0.5.4: Leaderboard Privacy
+- Added /privacy, which allows you to update your privacy settings for the leaderboard
+
 ## v0.5.3: Some small changes, fixes, and updates
 ### Starboard
 - Fixed an issue where the starboard wouldn't update when new reactions were added

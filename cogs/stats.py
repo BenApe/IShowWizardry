@@ -68,7 +68,9 @@ class stats(commands.Cog):
                 if author_data != None: break
                 continue
             member, val = member_vals[i]
-            top20 += f"{i + 1}. {member.display_name} - **{val}**\n"
+            username = "Hidden User" if scope == "global" and userstats(member.id).is_hidden() else member.display_name
+            
+            top20 += f"{i + 1}. {username} - **{val}**\n"
             if member.id == author.id: author_data = f"-# Your Positon: {ordinal(i + 1)} (score: {val})."
         
         if author_data != None: top20 += author_data
@@ -82,6 +84,27 @@ class stats(commands.Cog):
         embed.set_footer(text=f"{timer.elapsed}ms")
         
         await ctx.send(embed=embed)
+    
+    @commands.hybrid_command(name="privacy", description="Change your privacy settings for stats.")
+    @app_commands.choices(
+        scope=[
+            app_commands.Choice(name="Global (default). Your username will be visible to anyone who uses the leaderboard command.", value="global"),
+            app_commands.Choice(name="Server. Your username will be hidden globally, but users in the same server can still see your name.", value="server")
+        ]
+    )
+    async def privacy(self, ctx:commands.Context, scope:str = None):
+        statsuser = userstats(ctx.author.id)
+        hidden = scope == "server"
+        reply_str = ""
+        
+        if scope != None:
+            statsuser.update_privacy(hidden)
+        
+        else:
+            hidden = statsuser.is_hidden()
+        
+        settings = "Server. Your username will be hidden globally, but users in the same server will still see your name." if hidden else "Global (default). Your username will be visible to anyone who uses the leaderboard command."
+        await ctx.reply(f"Privacy settings: {settings}", ephemeral=True)
 
 async def setup(bot):
     await bot.add_cog(stats(bot))

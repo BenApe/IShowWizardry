@@ -371,11 +371,22 @@ class userstats():
         
         self.update_stats(user_stats)
     
+    def is_hidden(self):
+        user_stats = self.get_stats()
+        hidden = user_stats.get("hide", False)
+        return hidden
+    
+    def update_privacy(self, hidden:bool):
+        user_stats = self.get_stats()
+        user_stats.update({"hide": hidden})
+        self.update_stats(user_stats)
+    
     def to_string(self):
         user_stats = self.get_stats()
         stats_str = ""
         
         for label in user_stats.keys():
+            if label == "hide": continue
             value = user_stats.get(label)
             label = label.replace("_", " ").title()
             stats_str += f"{label}: {value}\n"

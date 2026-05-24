@@ -1,4 +1,4 @@
-VERSION = "0.5.2"
+VERSION = "0.5.4"
 
 import discord
 import os
@@ -122,7 +122,8 @@ async def help(ctx:commands.Context, command_name:str=None):
             "changelog": "See what has changed in the most recent update.",
             "bug_report": "Submit a bug report to the dev (slash command only).",
             "stats": "View stats for yourself or someone else.",
-            "leaderboard": "View the global or server leaderboard for a specific stat."
+            "leaderboard": "View the global or server leaderboard for a specific stat.",
+            "privacy": "Update or view your privacy settings for leaderboards."
         },
         "Fun":{
             "die": "Roll a die with as many sides as you want.",
